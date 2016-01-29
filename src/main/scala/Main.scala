@@ -1,4 +1,4 @@
-import android.graphics.{Bitmap, BitmapFactory}
+import android.graphics.{Color, Bitmap, BitmapFactory}
 
 object Main {
   def main(args: Array[String]): Unit = {
@@ -11,5 +11,21 @@ object Main {
 
   def doStuff(bitmap: Bitmap): Unit = {
 
+  }
+
+  def averageColor(bitmap: Bitmap): Color = {
+    ???
+  }
+
+  def sectionBitmap(bitmap: Bitmap, granularity: Int): Seq[Bitmap] = {
+    ???
+  }
+
+  def findBitmapWithAverageColor(color: Color): Bitmap = {
+    ???
+  }
+
+  def rebuildBitmap(sections: Seq[Bitmap]): Bitmap = {
+    ???
   }
 }
