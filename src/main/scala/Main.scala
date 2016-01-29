@@ -13,51 +13,45 @@ object Main {
   }
 
   def doStuff(image: BufferedImage, granularity: Int): Unit = {
-    val colors: Array[Array[Color]] = sectionImage(image, granularity)
+    sectionImage(image, granularity).foreach(_.map(averageColor))
   }
 
-  def averageColor(image: BufferedImage, startX: Int = 0, startY: Int = 0, sectionSize: Int = 100): Color = {
-    var finalX = startX + sectionSize
-    var finalY = startY + sectionSize
-
-    if (finalX > image.getWidth) finalX = image.getWidth
-    if (finalY > image.getHeight) finalY = image.getHeight
-
+  def averageColor(image: BufferedImage): Color = {
     var sumRed = 0
     var sumGreen = 0
     var sumBlue = 0
 
-    for (x <- startX until finalX) {
-      for (y <- startY until finalY) {
-        val pixel: Color = new Color(image.getRGB(x, y))
+    for (x <- 0 until image.getWidth) {
+      for (y <- 0 until image.getHeight) {
+        val pixel : Color = new Color(image.getRGB(x, y))
         sumRed += pixel.getRed
         sumGreen += pixel.getGreen
         sumBlue += pixel.getBlue
       }
     }
 
-    val area = sectionSize * sectionSize
+    val area = image.getWidth * image.getHeight
 
     new Color(sumRed / area, sumGreen / area, sumBlue / area)
   }
 
-  def sectionImage(image: BufferedImage, granularity: Int): Array[Array[Color]] = {
+  def sectionImage(image: BufferedImage, granularity: Int): Array[Array[BufferedImage]] = {
     val largestSide = math.max(image.getWidth, image.getHeight)
-    val sectionDimension = largestSide / granularity
+    val sectionDimension = largestSide/granularity
 
-    val numOfColumns = image.getWidth / sectionDimension
-    val numOfRows = image.getHeight / sectionDimension
-    val sectionColors = Array.ofDim[Color](numOfColumns, numOfRows)
+    val numOfColumns = image.getWidth/sectionDimension
+    val numOfRows = image.getHeight/sectionDimension
+    val sectionedImages = Array.ofDim[BufferedImage](numOfColumns, numOfRows)
 
     for (x <- 0 until numOfColumns) {
       for (y <- 0 until numOfRows) {
         val startX = x * sectionDimension
         val startY = y * sectionDimension
-        sectionColors(x)(y) = averageColor(image, startX, startY, sectionDimension)
+        sectionedImages(x)(y) = image.getSubimage(startX, startY, sectionDimension, sectionDimension)
       }
     }
 
-    sectionColors
+    sectionedImages
   }
 
   def findImageWithAverageColor(color: Color): BufferedImage = {
