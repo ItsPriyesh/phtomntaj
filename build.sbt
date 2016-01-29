@@ -8,4 +8,4 @@ libraryDependencies ++= Seq(
   "com.sksamuel.scrimage" %% "scrimage-core" % "2.1.0"
 )
 
-unmanagedJars in Compile += file("libs/android-support-v7-palette.jar")
+unmanagedJars in Compile += file("libs/sanselan-0.97-incubator.jar")
