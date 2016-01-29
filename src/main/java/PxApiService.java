@@ -6,9 +6,7 @@ import java.util.List;
 
 public class PxApiService {
 
-    private class PhotosResult {
-        List<Photo> photos;
-    }
+    private class PhotosResult { List<Photo> photos; }
 
     private interface Service {
         @GET("/photos")
@@ -39,5 +37,4 @@ public class PxApiService {
     public List<Photo> getPhotos() {
         return service.getPhotos("popular", 100, 100, System.getenv("PX_CONSUMER_KEY")).photos;
     }
-
 }
