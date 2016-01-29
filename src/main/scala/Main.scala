@@ -13,7 +13,7 @@ object Main {
   }
 
   def doStuff(image: BufferedImage, granularity: Int): Unit = {
-    sectionImage(image, granularity).foreach(_.map(averageColor))
+    sectionImage(image, granularity).map(averageColor))
   }
 
   def averageColor(image: BufferedImage): Color = {
@@ -35,7 +35,7 @@ object Main {
     new Color(sumRed / area, sumGreen / area, sumBlue / area)
   }
 
-  def sectionImage(image: BufferedImage, granularity: Int): Array[Array[BufferedImage]] = {
+  def sectionImage(image: BufferedImage, granularity: Int): Array[BufferedImage] = {
     val largestSide = math.max(image.getWidth, image.getHeight)
     val sectionDimension = largestSide/granularity
 
@@ -51,7 +51,7 @@ object Main {
       }
     }
 
-    sectionedImages
+    sectionedImages flatten
   }
 
   def findImageWithAverageColor(color: Color): BufferedImage = {
