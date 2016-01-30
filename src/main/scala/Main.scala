@@ -34,13 +34,14 @@ object Main {
     var sumGreen = 0
     var sumBlue = 0
 
-    (0 until image.getWidth zip (0 until image.getHeight)).map {
-      case (x, y) => new Color(image.getRGB(x, y))
-    }.foreach(color => {
-      sumRed += color.getRed
-      sumGreen += color.getGreen
-      sumBlue += color.getBlue
-    })
+    for (x <- 0 until image.getWidth) {
+      for (y <- 0 until image.getHeight) {
+        val pixel : Color = new Color(image.getRGB(x, y))
+        sumRed += pixel.getRed
+        sumGreen += pixel.getGreen
+        sumBlue += pixel.getBlue
+      }
+    }
 
     val area = image.getWidth * image.getHeight
 
@@ -87,11 +88,11 @@ object Main {
   }
 
   def rebuildImage(sections: Array[BufferedImage], numOfRows: Int, numOfColumns: Int): BufferedImage = {
-    val finalImage: BufferedImage = new BufferedImage(100 * numOfRows, 100 * numOfColumns, 0)
+    val finalImage: BufferedImage = new BufferedImage(100 * numOfColumns, 100 * numOfRows, BufferedImage.TYPE_3BYTE_BGR)
 
     var num = 0
-    for (x <- 0 until numOfRows) {
-      for (y <- 0 until numOfColumns) {
+    for (x <- 0 until numOfColumns) {
+      for (y <- 0 until numOfRows) {
         finalImage.createGraphics().drawImage(sections(num), x * 100, y * 100, null)
         num = num + 1
       }
