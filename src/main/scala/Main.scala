@@ -25,14 +25,13 @@ object Main {
     var sumGreen = 0
     var sumBlue = 0
 
-    for (x <- 0 until image.getWidth) {
-      for (y <- 0 until image.getHeight) {
-        val pixel : Color = new Color(image.getRGB(x, y))
-        sumRed += pixel.getRed
-        sumGreen += pixel.getGreen
-        sumBlue += pixel.getBlue
-      }
-    }
+    (0 until image.getWidth zip (0 until image.getHeight)).map {
+      case (x, y) => new Color(image.getRGB(x, y))
+    }.foreach(color => {
+      sumRed += color.getRed
+      sumGreen += color.getGreen
+      sumBlue += color.getBlue
+    })
 
     val area = image.getWidth * image.getHeight
 
@@ -41,10 +40,10 @@ object Main {
 
   def sectionImage(image: BufferedImage, granularity: Int): Array[BufferedImage] = {
     val largestSide = math.max(image.getWidth, image.getHeight)
-    val sectionDimension = largestSide/granularity
+    val sectionDimension = largestSide / granularity
 
-    val numOfColumns = image.getWidth/sectionDimension
-    val numOfRows = image.getHeight/sectionDimension
+    val numOfColumns = image.getWidth / sectionDimension
+    val numOfRows = image.getHeight / sectionDimension
     val sectionedImages = Array.ofDim[BufferedImage](numOfColumns, numOfRows)
 
     for (x <- 0 until numOfColumns) {
