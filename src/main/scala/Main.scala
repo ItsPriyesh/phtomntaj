@@ -1,6 +1,7 @@
 import java.awt.Color
 import java.awt.image.BufferedImage
 import java.io.File
+import javax.imageio.ImageIO
 import scala.collection.SortedMap
 
 object Main {
@@ -14,11 +15,18 @@ object Main {
   }
 
   def doStuff(image: BufferedImage, granularity: Int): Unit = {
-    val sortedThumbnailsByColor = sortThumbnailsByAverageColor
-    val averageColorsForOriginalImage: Array[Color] = sectionImage(image, granularity).map(averageColor)
-    val thumbnailImageForFinalImage = averageColorsForOriginalImage.map(color => findImageWithAverageColor(color, sortedThumbnailsByColor))
+    val largestSide = math.max(image.getWidth, image.getHeight)
+    val sectionDimension = largestSide / granularity
+    val numOfColumns = image.getWidth / sectionDimension
+    val numOfRows = image.getHeight / sectionDimension
 
-    //TODO: Stitch thumbnailImageForFinalImage
+    val sortedThumbnails = sortRetrievedThumbnailsByColor
+    val averageColorsForOriginalImage = sectionImage(image, numOfRows, numOfColumns, sectionDimension).map(averageColor)
+    val thumbnailsForFinalImage = averageColorsForOriginalImage.map(color => findImageWithAverageColor(color, sortedThumbnails))
+
+    val finalImage = rebuildImage(thumbnailsForFinalImage, numOfRows, numOfColumns)
+
+    ImageIO.write(finalImage, "jpeg", new File("output.jpg"))
   }
 
   def averageColor(image: BufferedImage): Color = {
@@ -39,12 +47,7 @@ object Main {
     new Color(sumRed / area, sumGreen / area, sumBlue / area)
   }
 
-  def sectionImage(image: BufferedImage, granularity: Int): Array[BufferedImage] = {
-    val largestSide = math.max(image.getWidth, image.getHeight)
-    val sectionDimension = largestSide / granularity
-
-    val numOfColumns = image.getWidth / sectionDimension
-    val numOfRows = image.getHeight / sectionDimension
+  def sectionImage(image: BufferedImage, numOfRows: Int, numOfColumns: Int, sectionDimension: Int): Array[BufferedImage] = {
     val sectionedImages = Array.ofDim[BufferedImage](numOfColumns, numOfRows)
 
     for (x <- 0 until numOfColumns) {
@@ -58,7 +61,7 @@ object Main {
     sectionedImages flatten
   }
 
-  def sortThumbnailsByAverageColor: SortedMap[String, BufferedImage] = {
+  def sortRetrievedThumbnailsByColor: SortedMap[String, BufferedImage] = {
     var sortedThumbnails = SortedMap[String, BufferedImage]()
     val images: List[BufferedImage] = ImageRetriever.getImagesFrom500Px
     images.foreach(image => {
@@ -83,7 +86,17 @@ object Main {
     }
   }
 
-  def rebuildImage(sections: Seq[BufferedImage]): BufferedImage = {
-    ???
+  def rebuildImage(sections: Array[BufferedImage], numOfRows: Int, numOfColumns: Int): BufferedImage = {
+    val finalImage: BufferedImage = new BufferedImage(100 * numOfRows, 100 * numOfColumns, 0)
+
+    var num = 0
+    for (x <- 0 until numOfRows) {
+      for (y <- 0 until numOfColumns) {
+        finalImage.createGraphics().drawImage(sections(num), x * 100, y * 100, null)
+        num = num + 1
+      }
+    }
+
+    finalImage
   }
 }
