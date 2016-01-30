@@ -14,9 +14,11 @@ object Main {
   }
 
   def doStuff(image: BufferedImage, granularity: Int): Unit = {
-    val sortedThumbnailsByColor = thumbnailsByAverageColor
-    val averageColors = sectionImage(image, granularity).map(averageColor)
-    val flattenedThumbnailImage = averageColors.map(color => findImageWithAverageColor(color, sortedThumbnailsByColor))
+    val sortedThumbnailsByColor = sortThumbnailsByAverageColor
+    val averageColorsForOriginalImage: Array[Color] = sectionImage(image, granularity).map(averageColor)
+    val thumbnailImageForFinalImage = averageColorsForOriginalImage.map(color => findImageWithAverageColor(color, sortedThumbnailsByColor))
+
+    //TODO: Stitch thumbnailImageForFinalImage
   }
 
   def averageColor(image: BufferedImage): Color = {
@@ -56,7 +58,7 @@ object Main {
     sectionedImages flatten
   }
 
-  def thumbnailsByAverageColor: SortedMap[String, BufferedImage] = {
+  def sortThumbnailsByAverageColor: SortedMap[String, BufferedImage] = {
     var sortedThumbnails = SortedMap[String, BufferedImage]()
     val images: List[BufferedImage] = ImageRetriever.getImagesFrom500Px
     images.foreach(image => {
