@@ -13,7 +13,7 @@ object Main {
   }
 
   def doStuff(image: BufferedImage, granularity: Int): Unit = {
-    sectionImage(image, granularity).map(averageColor))
+    val averageColors = sectionImage(image, granularity).map(averageColor)
   }
 
   def averageColor(image: BufferedImage): Color = {
