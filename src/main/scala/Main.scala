@@ -1,8 +1,11 @@
 import java.awt.Color
 import java.awt.image.BufferedImage
 import java.io.File
+import scala.collection.SortedMap
 
 object Main {
+
+  var sortedThumbnailsByColor = thumbnailsByAverageColor
 
   def main(args: Array[String]): Unit = {
     if (args.length < 2) print("Please pass the path to an image as an argument as well as a granularity.")
@@ -52,6 +55,20 @@ object Main {
     }
 
     sectionedImages flatten
+  }
+
+  def thumbnailsByAverageColor: SortedMap[String, Any] = {
+    var sortedThumbnails = SortedMap[String, Any]()
+    val images: List[BufferedImage] = ImageRetriever.getImagesFrom500Px
+    images.foreach(image => {
+      sortedThumbnails += (colorString(averageColor(image)) -> image)
+    })
+
+    sortedThumbnails
+  }
+
+  def colorString(color: Color): String = {
+    s"${"%03d".format(color.getRed)}${"%03d".format(color.getBlue)}${"%03d".format(color.getGreen)}"
   }
 
   def findImageWithAverageColor(color: Color): BufferedImage = {
