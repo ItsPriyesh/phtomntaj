@@ -5,8 +5,6 @@ import scala.collection.SortedMap
 
 object Main {
 
-  var sortedThumbnailsByColor = thumbnailsByAverageColor
-
   def main(args: Array[String]): Unit = {
     if (args.length < 2) print("Please pass the path to an image as an argument as well as a granularity.")
     else ImageLoader.fromFile(new File(args(0))) match {
@@ -16,8 +14,9 @@ object Main {
   }
 
   def doStuff(image: BufferedImage, granularity: Int): Unit = {
+    val sortedThumbnailsByColor = thumbnailsByAverageColor
     val averageColors = sectionImage(image, granularity).map(averageColor)
-    averageColors.map(findImageWithAverageColor)
+    val flattenedThumbnailImage = averageColors.map(color => findImageWithAverageColor(color, sortedThumbnailsByColor))
   }
 
   def averageColor(image: BufferedImage): Color = {
@@ -72,10 +71,15 @@ object Main {
     s"${"%03d".format(color.getRed)}${"%03d".format(color.getBlue)}${"%03d".format(color.getGreen)}"
   }
 
-  def findImageWithAverageColor(color: Color): BufferedImage = {
+  def findImageWithAverageColor(color: Color, sortedThumbnailsByColor: SortedMap[String, BufferedImage]): BufferedImage = {
     val stringColor = colorString(color)
-    val key = sortedThumbnailsByColor.to(stringColor).lastKey
-    sortedThumbnailsByColor(key)
+    val tree = sortedThumbnailsByColor.to(stringColor)
+
+    if (tree.isEmpty) {
+      sortedThumbnailsByColor(sortedThumbnailsByColor.firstKey)
+    } else {
+      sortedThumbnailsByColor(tree.lastKey)
+    }
   }
 
   def rebuildImage(sections: Seq[BufferedImage]): BufferedImage = {
