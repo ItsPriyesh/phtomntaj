@@ -34,13 +34,11 @@ object Main {
     var sumGreen = 0
     var sumBlue = 0
 
-    for (x <- 0 until image.getWidth) {
-      for (y <- 0 until image.getHeight) {
-        val pixel : Color = new Color(image.getRGB(x, y))
-        sumRed += pixel.getRed
-        sumGreen += pixel.getGreen
-        sumBlue += pixel.getBlue
-      }
+    for (x <- 0 until image.getWidth; y <- 0 until image.getHeight) {
+      val pixel: Color = new Color(image.getRGB(x, y))
+      sumRed += pixel.getRed
+      sumGreen += pixel.getGreen
+      sumBlue += pixel.getBlue
     }
 
     val area = image.getWidth * image.getHeight
@@ -51,12 +49,10 @@ object Main {
   def sectionImage(image: BufferedImage, numOfRows: Int, numOfColumns: Int, sectionDimension: Int): Array[BufferedImage] = {
     val sectionedImages = Array.ofDim[BufferedImage](numOfColumns, numOfRows)
 
-    for (x <- 0 until numOfColumns) {
-      for (y <- 0 until numOfRows) {
-        val startX = x * sectionDimension
-        val startY = y * sectionDimension
-        sectionedImages(x)(y) = image.getSubimage(startX, startY, sectionDimension, sectionDimension)
-      }
+    for (x <- 0 until numOfColumns; y <- 0 until numOfRows) {
+      val startX = x * sectionDimension
+      val startY = y * sectionDimension
+      sectionedImages(x)(y) = image.getSubimage(startX, startY, sectionDimension, sectionDimension)
     }
 
     sectionedImages flatten
@@ -91,11 +87,9 @@ object Main {
     val finalImage: BufferedImage = new BufferedImage(100 * numOfColumns, 100 * numOfRows, BufferedImage.TYPE_3BYTE_BGR)
 
     var num = 0
-    for (x <- 0 until numOfColumns) {
-      for (y <- 0 until numOfRows) {
-        finalImage.createGraphics().drawImage(sections(num), x * 100, y * 100, null)
-        num = num + 1
-      }
+    for (x <- 0 until numOfColumns; y <- 0 until numOfRows) {
+      finalImage.createGraphics().drawImage(sections(num), x * 100, y * 100, null)
+      num = num + 1
     }
 
     finalImage
