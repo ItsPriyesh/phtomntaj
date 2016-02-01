@@ -40,7 +40,7 @@ public class PxApiService {
     public List<Photo> getPhotos() {
         List<Photo> photos = new ArrayList<>();
         for (int i = 1; i < NUMBER_OF_PAGES; i++) {
-            photos.addAll(service.getPhotos("popular", 100, 100, System.getenv("PX_CONSUMER_KEY"), 1).photos);
+            photos.addAll(service.getPhotos("popular", 100, 100, System.getenv("PX_CONSUMER_KEY"), i).photos);
         }
         return photos;
     }
