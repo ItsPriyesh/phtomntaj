@@ -2,6 +2,7 @@ import retrofit.RestAdapter;
 import retrofit.http.GET;
 import retrofit.http.Query;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PxApiService {
@@ -13,10 +14,12 @@ public class PxApiService {
         PhotosResult getPhotos(@Query("feature") String feature,
                        @Query("rpp") int results,
                        @Query("image_size") int imageSize,
-                       @Query("consumer_key") String consumerKey);
+                       @Query("consumer_key") String consumerKey,
+                       @Query("page") int pageNumber);
     }
 
     private static final String API_URL = "https://api.500px.com/v1/";
+    private static final int NUMBER_OF_PAGES = 10;
 
     private static PxApiService sApiService = null;
     private final Service service;
@@ -35,6 +38,10 @@ public class PxApiService {
     }
 
     public List<Photo> getPhotos() {
-        return service.getPhotos("popular", 100, 100, System.getenv("PX_CONSUMER_KEY")).photos;
+        List<Photo> photos = new ArrayList<>();
+        for (int i = 1; i < NUMBER_OF_PAGES; i++) {
+            photos.addAll(service.getPhotos("popular", 100, 100, System.getenv("PX_CONSUMER_KEY"), 1).photos);
+        }
+        return photos;
     }
 }
